@@ -1,6 +1,6 @@
 # Safe(H)er — Terms of Service
 
-**Last updated:** February 2026
+**Last updated:** January 2026
 
 Please read these Terms of Service ("Terms") carefully before using the Safe(H)er mobile application ("the App"). By downloading, installing or using the App you agree to be bound by these Terms. If you do not agree, do not use the App.
 
