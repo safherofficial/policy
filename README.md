@@ -1,49 +1,58 @@
+Perfetto, riprendo. Ecco il README aggiornato pronto da caricare sul repo safheofficial/policy:
+
+📄 File: README.md
 # Safe(H)er — Legal & Policy Repository
 
-This repository hosts the **public legal documents** for the Safe(H)er mobile application:
+This repository hosts the **public legal documents** for the Safe(H)er mobile application.
 
-* 📄 [Privacy Policy](./PRIVACY_POLICY.md)
-* 🔐 [Security Disclosure Policy](./SECURITY.md)
-* 📬 Contact: **[safherofficial@gmail.com](mailto:safherofficial@gmail.com)**
+## 📄 Documents
+
+- [Privacy Policy](./PRIVACY_POLICY.md)
+- [Terms of Service](./TERMS_OF_SERVICE.md)
+- [Security Disclosure Policy](./SECURITY.md)
+- [License](./LICENSE)
+
+## 📬 Contact
+
+- Privacy questions: **privacy@safeher.app**
+- Legal questions: **legal@safeher.app**
+- Security disclosure: **security@safeher.app**
+- General support: **support@safeher.app**
 
 ---
 
 ## About Safe(H)er
 
-**Safe(H)er** is a personal safety mobile application designed to help people in danger—including survivors of domestic violence, stalking, harassment, and assault—reach their trusted network and emergency services as quickly as possible.
+**Safe(H)er** is a personal safety mobile application designed to help people in danger — including survivors of domestic violence, stalking, harassment and assault — reach their trusted network and emergency services as fast as possible.
 
-### Our Design Principles
+Our design principles:
 
-* **Speed** — Help must be one action away.
-* **Privacy by Design** — Your data belongs to you, and only to you.
-* **Discretion** — Safety tools should never put the user at additional risk.
-* **Offline Resilience** — Protection should not depend on a perfect network connection.
+- **Speed** — help must be one action away.
+- **Privacy by design** — your data belongs to you, and only to you.
+- **Discretion** — safety tools should not put the user at additional risk.
+- **Offline resilience** — protection cannot depend on a perfect network.
 
-For security reasons, implementation details of the application are intentionally not published in this repository.
+We intentionally do not publish implementation details of the app in this repository.
 
 ---
 
 ## Availability
 
-* 📱 **Android** — Available on Google Play (rolling out).
-* 🍏 **iOS** — Coming soon.
+- 📱 **Android** — available on Google Play (rolling out).
+- 🍏 **iOS** — coming soon.
 
 ---
 
 ## Trademarks
 
-**Safe(H)er** and the **Safe(H)er** logo are trademarks of their respective owner. All rights reserved.
-
----
+"Safe(H)er" and the Safe(H)er logo are trademarks of their respective owner. All rights reserved.
 
 ## License
 
-The **Safe(H)er** application source code is **proprietary and not open source**.
-
-The legal documents contained in this repository (Privacy Policy and Security Disclosure Policy) are published solely for transparency purposes and are © Safe(H)er. Unauthorized reproduction or modification is prohibited.
+The **application source code is proprietary and NOT open source**.
+The documents in this repository (Privacy Policy, Terms of Service, Security Policy) are published for transparency and legal compliance, and are © Safe(H)er.
+See the [LICENSE](./LICENSE) file for full terms.
 
 ---
 
-### Emergency Notice
-
-If you are in immediate danger, call your local emergency number immediately (112 in most of Europe, 911 in the United States, or your country's emergency services).
+⚠️ If you are in immediate danger, please call your local emergency number now (112 in Europe, 911 in the US)
