@@ -2,7 +2,7 @@
 
 **A production-ready emergency safety companion for victims of domestic violence, stalking, and assault.**
 
-Version 1.0.4 · Android + iOS + Web · IT / EN / ES / FR / DE
+Version 1.1.21 · Android + iOS + Web · IT / EN / ES / FR / DE
 
 ---
 
@@ -21,6 +21,7 @@ Safe(H)er is a mobile application designed with a single mission: to protect peo
 ### 🎙️ Hands-free activation (dual channel)
 Two independent channels share the same audio session — **zero extra battery cost**:
 1. **Keyword trigger** — up to **3 personalised safewords**, matched with a **fuzzy Levenshtein algorithm** (tolerates transcription errors typical of native STT engines). Works in **any language**, processed **100 % on-device** (iOS SFSpeechRecognizer / Android SpeechRecognizer). `maxAlternatives=5` on every result to raise recall.
+   - **Guardian Angel escalation (Android)** — if the keyword is recognised while a Guardian Angel timer is currently active, the app places a real, automatic call to **112** directly from the native Android layer (`ACTION_CALL`, requires the `CALL_PHONE` permission) — no dialer screen, no extra tap. Outside an active Guardian Angel session (or on iOS, or if the call permission isn't granted), the keyword trigger keeps opening the normal message composer/WhatsApp queue, unchanged.
 2. **Scream detection (L2 hybrid)** — analyses microphone volume peaks; requires **two peaks within 3 s** above a configurable threshold (Low / Medium / High sensitivity). Designed for panic screams when no codeword is possible. Triggers a **5-second cancellable countdown with strong vibration** — you can abort false positives.
 
 ### 📱 Sequential WhatsApp queue
@@ -31,8 +32,9 @@ When the SOS fires with WhatsApp as the alert channel, a queue modal opens Whats
 - **Circle (live-location)** — mutual real-time location sharing with people you trust. Requires a **user code + double opt-in**, so nobody can track you without your explicit acceptance.
 
 ### 🎭 Disguise & lock
-- **Calculator masked shell** — the app opens as a fully working calculator. A specific PIN + `=` sequence unlocks the real interface.
+- **Calculator masked shell** — the app opens as a fully working calculator. Typing your PIN + `=` unlocks the real interface; a long-press with biometrics enabled also unlocks. This single combination is now the **only** unlock step — a second, redundant app-lock PIN prompt right after no longer appears.
 - **PIN or biometric lock** — configurable in Settings. Unlock persists for the whole JS session; a cold restart re-locks.
+- **PIN is stored only on-device** (never synced to the server in a verifiable form — see [`PRIVACY_POLICY.md`](./PRIVACY_POLICY.md) §2.2). To prevent a permanent lockout after a reinstall, new device, or cleared app data — situations where the disguise would otherwise demand a PIN that no longer exists locally — the calculator disguise **automatically stays disabled** until a new PIN is configured on that device, even if it was previously turned on for the account.
 - **Immersive mode** — hides system bars during emergencies.
 
 ### 🎬 Evidence Vault
@@ -40,7 +42,10 @@ When the SOS fires with WhatsApp as the alert channel, a queue modal opens Whats
 - Encrypted at rest on the server; accessible only to the account owner via authenticated API.
 
 ### ⏰ Guardian Angel Timer
-Dead-man switch: set a check-in interval, get reminded, and if you fail to confirm safety within the window, the SOS auto-fires with your last known position.
+Dead-man switch: set a check-in interval, get reminded, and if you fail to confirm safety within the window, the SOS auto-fires with your last known position — sent silently in the background on Android when configured, or via the normal composer flow otherwise.
+- **Single-delivery guarantee** — the native background alarm/SMS path now closes out its own session the moment it delivers (or confirms a prior delivery) for an automatic timer expiry. This prevents the app from re-firing a second, redundant "SOS with confirmation" request the next time you bring it to the foreground after a background auto-send.
+- **Voice-trigger escalation** — see "Hands-free activation" above: your safeword calls 112 directly while a Guardian Angel session is active.
+- A temporary, read-only diagnostics panel (Guardian Angel screen → "Diagnostica timer") surfaces the native timer's last scheduled time, alarm mode, and last SMS result, for QA/support purposes only — it does not change any Guardian Angel/SOS behaviour.
 
 ### 📞 Fake incoming call
 Simulates a phone call at a scheduled time — useful for exiting uncomfortable situations discreetly.
@@ -48,7 +53,7 @@ Simulates a phone call at a scheduled time — useful for exiting uncomfortable 
 ### 🌍 Full i18n
 IT / EN / ES / FR / DE — auto-detected from device locale, manually overridable in Settings.
 
-### 🔒 Privacy & data controls (v1.0.4)
+### 🔒 Privacy & data controls
 - **Show / hide password toggle** on all authentication screens.
 - **In-app account deletion** — Settings → Delete my account. Requires password re-entry, purges every collection in one click.
 - **Public deletion page** at [`https://www.safeher.app/delete-account`](https://www.safeher.app/delete-account) for users who have uninstalled or lost access.
@@ -66,139 +71,11 @@ IT / EN / ES / FR / DE — auto-detected from device locale, manually overridabl
 | **Database** | MongoDB |
 | **Email** | Resend (OTP, deletion acknowledgments) |
 | **Auth** | JWT tokens · bcrypt password hashing · `expo-secure-store` client-side |
-| **Speech** | `@likeyoureyes/expo-speech-recognition` (native STT, on-device) |
+| **Speech** | `expo-speech-recognition` (native STT, on-device) |
+| **Native safety module** | `modules/silent-sms` (Expo Module, Android/Kotlin) — Guardian Angel alarm scheduling, silent SMS send, and the voice-trigger automatic call to 112 |
 | **Vibration** | React Native `Vibration` + `expo-haptics` |
 | **Package name** | `com.safeherofficial.safeher` |
 
 ---
 
 ## Repository layout
-
-```
-/app
-├── backend/
-│   ├── server.py              # FastAPI + all API endpoints + inactivity sweeper
-│   ├── emails.py              # Resend integration (OTP, deletion ack)
-│   ├── support_numbers.py     # National emergency number lookup
-│   └── tests/                 # pytest suite (iterations 10, 11, 12)
-├── frontend/
-│   ├── app/
-│   │   ├── (tabs)/            # index / contacts / circle / vault / settings
-│   │   ├── auth/              # login, register, forgot
-│   │   ├── delete-account.tsx # public deletion page
-│   │   ├── guardian.tsx
-│   │   ├── fake-call*.tsx
-│   │   └── privacy.tsx
-│   ├── src/
-│   │   ├── components/        # AppLock, MaskedShell, VoiceTrigger,
-│   │   │                        ScreamCountdown, WhatsAppQueue, PasswordInput
-│   │   ├── utils/             # voice-detect, emergency-bus, sos-fire,
-│   │   │                        guardian, messages, background, pin
-│   │   ├── i18n/              # locales/{en,it,es,fr,de}.ts
-│   │   └── api/client.ts      # typed API client
-│   └── app.json
-├── delete-account.html        # standalone HTML for external landing pages
-├── DELETE_ACCOUNT_INTEGRATION.md
-├── RELEASE_NOTES_v1.0.4.md
-├── PRIVACY_POLICY.md
-├── SECURITY.md
-├── TERMS_OF_SERVICE.md
-└── README.md
-```
-
----
-
-## API endpoints (public + authenticated)
-
-### Auth
-- `POST /api/auth/register`
-- `POST /api/auth/login`
-- `GET /api/auth/me`
-- `POST /api/auth/forgot-password` — sends 6-digit code via email; **never** returns the code in the response
-- `POST /api/auth/reset-password` — locks after 5 wrong attempts per code
-- `DELETE /api/auth/me` — requires password re-entry, purges everything
-
-### Emergency
-- `POST /api/events` — records an SOS event
-- `GET /api/events` — event history
-- `POST /api/events/{id}/evidence` — attach evidence
-
-### Contacts
-- `GET /api/contacts` · `POST /api/contacts` · `PUT /api/contacts/{id}` · `DELETE /api/contacts/{id}`
-
-### Circle
-- `POST /api/circle/invite` · `POST /api/circle/accept` · `POST /api/circle/location`
-- `GET /api/circle/links` · `GET /api/circle/invites`
-- `DELETE /api/circle/link/{id}`
-
-### Settings
-- `GET /api/settings` · `PUT /api/settings`
-
-### Compliance
-- `POST /api/deletion-request` — **public**, no-auth, neutral response
-
----
-
-## Getting started
-
-### Development
-
-```bash
-# Backend
-cd /app/backend
-pip install -r requirements.txt
-uvicorn server:app --host 0.0.0.0 --port 8001 --reload
-
-# Frontend
-cd /app/frontend
-yarn install
-yarn expo start
-```
-
-Environment variables live in `/app/backend/.env` and `/app/frontend/.env`.
-
-### Running tests
-
-```bash
-cd /app/backend
-pytest tests/ -v
-```
-
-### Deployment
-
-Deployed via Emergent hosting. Publish button in the Emergent dashboard generates:
-- Web bundle at `https://www.safeher.app`
-- Android APK/AAB (package `com.safeherofficial.safeher`, versionCode 5)
-- iOS build (requires Apple Developer account)
-
-Release notes for v1.0.4: [`RELEASE_NOTES_v1.0.4.md`](./RELEASE_NOTES_v1.0.4.md).
-
----
-
-## Security posture
-
-Read the full [`SECURITY.md`](./SECURITY.md). Highlights:
-
-- ✅ **SEC-001 fixed** — reset codes never leaked in HTTP responses, brute-force protection (5 attempts).
-- ⚠️ **SEC-002** — PIN uses SHA-256 + static salt (roadmap: PBKDF2 + per-user salt + lockout).
-- ✅ **SEC-003 fixed** — GDPR Art. 17 in-app + public deletion + opt-in auto-delete after inactivity.
-- ⚠️ **SEC-004** — Live secrets in tracked `.env` (roadmap: secret manager rotation).
-
-Reporting: `security@safeher.app`.
-
----
-
-## License
-
-Proprietary — © 2026 Safe(H)er. Not for redistribution.
-
-## Contact
-
-- **Support**: support@safeher.app
-- **Privacy**: privacy@safeher.app
-- **Security**: security@safeher.app
-- **Domain**: www.safeher.app
-
----
-
-Made with love for the people who need it most. 💜
