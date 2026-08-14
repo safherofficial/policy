@@ -1,172 +1,397 @@
 # Safe(H)er — Privacy Policy
 
-**Effective date:** July 21, 2026 · **Version:** 1.0.4
-**Data controller:** Safe(H)er Team · privacy@safeher.app · www.safeher.app
+**Effective date:** August 14, 2026 · **Version:** 1.1.21
+**Data controller:** Safe(H)er Team · [safherofficial@gmail.com](mailto:safherofficial@gmail.com) · [www.safeherapp.site](http://www.safeherapp.site)
 
 ---
 
-## 1. Our commitment
+# 1. Our commitment
 
-Safe(H)er is used by people at risk of gender-based violence. We treat every byte of your data as if a hostile third party could inspect the device at any moment. This policy explains **exactly** what we collect, why, how long we keep it, and how you can control or delete it.
+Safe(H)er is used by people at risk of gender-based violence. We treat every byte of your data as if a hostile third party could inspect the device at any moment.
 
-We collect the **minimum** necessary to keep you safe. Everything that can be processed on-device is processed on-device.
+This policy explains **exactly** what we collect, why we collect it, how long we keep it, and how you can control or delete it.
 
----
+We collect the **minimum** necessary data required to provide safety features.
 
-## 2. Data we collect
-
-### 2.1 Data you provide (account)
-
-| Data | Purpose | Legal basis (GDPR) |
-|---|---|---|
-| **Email address** | Login, password reset, deletion confirmation | Art. 6(1)(b) contract performance |
-| **Password (bcrypt-hashed)** | Authentication | Art. 6(1)(b) |
-| **Full name** (optional) | Personalisation of alert messages | Art. 6(1)(a) consent |
-| **Phone number** (optional) | Included in outbound SOS as the sender identifier | Art. 6(1)(a) |
-| **Safe(H)er ID** (auto-generated 8-char code) | Circle invitations | Art. 6(1)(b) |
-
-### 2.2 Data you provide (safety config)
-
-| Data | Purpose | Legal basis |
-|---|---|---|
-| **Trusted contacts** (name, phone, email, relationship) | Recipients of your SOS alerts | Art. 6(1)(b) |
-| **Voice trigger phrases** (up to 3, plaintext in DB — encrypted at rest by the DB provider) | On-device keyword matching by the STT engine | Art. 6(1)(a) |
-| **PIN hash** (SHA-256, salted) | Unlock the disguised interface | Art. 6(1)(a) |
-| **Custom SOS message templates** | Personalised alert body | Art. 6(1)(a) |
-| **App settings** (language, notification channel, sensitivity, etc.) | UX personalisation | Art. 6(1)(a) |
-
-### 2.3 Data generated during use
-
-| Data | When | Retention |
-|---|---|---|
-| **GPS location** (latitude, longitude, accuracy, reverse-geocoded address) | Captured **only** at the moment of an SOS event and while the Circle sharing session is active | See §5 |
-| **Battery level & network status** | Included in each SOS event payload | See §5 |
-| **SOS event history** (type, timestamp, notified contact IDs) | Every time you fire the SOS (manual, keyword, scream, shake, guardian timer) | See §5 |
-| **Audio evidence recordings** | Only if you manually start a recording in the Evidence Vault | See §5 |
-| **Circle live-location breadcrumbs** | Only while an accepted Circle link is active — never for un-linked peers | Automatically overwritten every N seconds (default 30s) |
-| **Circle invites** (sender + receiver code, status) | When you invite someone | Deleted when accepted, declined, or the sender cancels |
-| **Password-reset codes** (hashed) | 15-minute validity | Auto-deleted on use, expiry, or after 5 wrong attempts |
-| **Deletion-request records** | When you use the public form at `/delete-account` | 12 months (audit trail) |
-| **`last_seen_at`** timestamp on the user record | Updated on every authenticated request | Used by the inactivity sweeper (§5.3), erased on account deletion |
-
-### 2.4 What we DO NOT collect
-
-- ❌ **No advertising IDs** — no IDFA, no GAID.
-- ❌ **No analytics SDKs** — no Google Analytics, no Firebase, no Mixpanel.
-- ❌ **No third-party trackers** — nothing on our servers reports back to marketing platforms.
-- ❌ **No continuous audio upload** — the microphone stream **never** leaves your device. Voice trigger + scream detection run entirely on-device using the OS-native speech recognizer (Apple SFSpeechRecognizer / Android SpeechRecognizer). We only receive the transcribed text — and only when a keyword matches, we fire an SOS event which is transmitted **without any audio**.
-- ❌ **No image content** — camera roll access is used only for the calculator disguise icon; no image is uploaded to our servers.
-- ❌ **No third-party cloud storage** — audio evidence stays on the primary MongoDB instance under our control.
-- ❌ **No sale of personal data**. Ever. Under no circumstances.
+Everything that can be processed on-device is processed on-device.
 
 ---
 
-## 3. Permissions we request
+# 2. Data we collect
 
-Each permission is asked contextually, only when the feature that needs it is enabled.
+## 2.1 Data you provide (account)
 
-| Permission | Feature | What we access |
-|---|---|---|
-| **Location (When-in-use)** | SOS + Guardian Angel | GPS coordinates at the moment of the emergency |
-| **Location (Always / Background)** | Circle live-location sharing | GPS coordinates while a Circle link is active |
-| **Microphone** | Voice trigger, scream detection, evidence recording | Live audio stream processed **on-device**; audio never uploaded |
-| **Contacts (read)** | Import contacts from phonebook | Read-only, one-shot; nothing is uploaded until you tick specific contacts |
-| **Camera** | Photo evidence (roadmap v1.1) | Not yet used |
-| **Biometrics / Face ID** | App unlock | Handled entirely by the OS; we only receive success/failure |
-| **Foreground service** (Android) | Keep background features alive | The OS displays a persistent notification while active |
-| **Vibration** | SOS confirmation, scream countdown | — |
+| Data                                               | Purpose                                      | Legal basis (GDPR)                |
+| -------------------------------------------------- | -------------------------------------------- | ---------------------------------- |
+| **Email address**                                  | Login, password reset, deletion confirmation | Art. 6(1)(b) contract performance |
+| **Password (bcrypt-hashed)**                       | Authentication                               | Art. 6(1)(b)                      |
+| **Full name** (optional)                           | Personalisation of emergency messages        | Art. 6(1)(a) consent              |
+| **Phone number** (optional)                        | Included in outbound SOS communication       | Art. 6(1)(a) consent              |
+| **Safe(H)er ID** (auto-generated 8-character code) | Circle invitations                           | Art. 6(1)(b)                      |
 
 ---
 
-## 4. Where data is stored and processed
+## 2.2 Data you provide (safety configuration)
 
-- **Backend**: hosted on Emergent infrastructure, EU-friendly region (see current DPO contact).
-- **Database**: MongoDB, encrypted at rest.
-- **Email**: Resend for transactional email delivery (password reset, deletion confirmation). Resend acts as a data processor under a signed DPA. Only your email address is transmitted to Resend.
-- **STT engine**: Apple (iOS) or Google (Android). These are the OS built-in speech engines. On iOS we explicitly request `requiresOnDeviceRecognition: true`. On Android on-device availability depends on the device manufacturer.
+| Data                                                    | Purpose                              | Legal basis  |
+| ------------------------------------------------------- | ------------------------------------ | ------------ |
+| **Trusted contacts** (name, phone, email, relationship) | Recipients of SOS alerts             | Art. 6(1)(b) |
+| **Voice trigger phrases**                               | On-device keyword matching           | Art. 6(1)(a) |
+| **PIN** — verification hash stored **only on the device**¹ | Unlock protection / disguise unlock | Art. 6(1)(a) |
+| **Custom SOS messages**                                 | Personalised emergency communication | Art. 6(1)(a) |
+| **Application settings**                                | User experience personalisation      | Art. 6(1)(a) |
 
-**No transfer outside the EU** is performed on personal data except where Resend/Apple/Google inherently operate cross-border for their processing; those transfers rely on **Standard Contractual Clauses** or an equivalent adequacy mechanism.
-
----
-
-## 5. Data retention
-
-### 5.1 Standard retention
-
-Data is kept **for as long as your account is active** — because you might need to review past SOS events, audio evidence, or contact history in a legal context.
-
-### 5.2 Deletion on user request
-
-You can delete your account and all associated data at any time. Three paths:
-
-1. **In-app (fastest, immediate)**: `Settings → Delete my account`. Requires you to re-enter your password. Erases everything within seconds.
-2. **Public form (no login needed)**: [`https://www.safeher.app/delete-account`](https://www.safeher.app/delete-account). Enter your email; the request is queued and executed within **30 days** per GDPR Art. 17.
-3. **Email**: `support@safeher.app` — reply-quality within 5 business days.
-
-### 5.3 Automatic deletion on inactivity (opt-in)
-
-New in v1.0.4: `Settings → Data retention → Auto-delete after inactivity`. You choose a threshold (30, 60, 90, 180, 365 days, or Never). If you don't sign in within that window, the server automatically purges your account and all associated data. Default is **Never** — you must actively opt-in.
-
-A daily background sweeper (`server.py::_inactivity_sweeper`) enforces this. A 7-day advance warning email is sent when possible.
-
-### 5.4 Anonymised audit log
-
-When an account is deleted, we retain a single anonymised record with only:
-- The **date** of deletion
-- The **reason** you entered (if any)
-
-No user ID, no email, no identifiable data. Retained for 6 months for regulatory audit.
+¹ The PIN's actual, verifiable hash (SHA-256, locally salted) is generated and checked **entirely on-device** and is **never transmitted to our servers**. The server only stores a non-verifying flag indicating that "a PIN has been configured", so that your PIN-related settings (e.g. whether the calculator disguise is enabled) can sync across the app. Because of this, the verifiable PIN itself does not survive an app reinstall, a new device, or clearing the app's local data — see the calculator disguise note below.
 
 ---
 
-## 6. Your GDPR rights
+## 2.3 Data generated during use
 
-You have the right to:
+| Data                        | When collected                                    | Retention                 |
+| --------------------------- | ------------------------------------------------- | ------------------------- |
+| GPS location                | Only during SOS events and active Circle sessions | See Section 5             |
+| Battery percentage          | Included in emergency messages                    | See Section 5             |
+| Network status              | Included in emergency payload                     | See Section 5             |
+| SOS history                 | Every emergency activation                        | See Section 5             |
+| Audio evidence              | Only when manually recorded by the user           | See Section 5             |
+| Circle location breadcrumbs | Only during active Circle sharing                 | Automatically overwritten |
+| Circle invitations          | During invitation workflow                        | Deleted after completion  |
+| Password reset codes        | During password recovery                          | Deleted after expiry      |
+| Account deletion requests   | During deletion process                           | 12 months audit retention |
+| last_seen_at timestamp      | Authentication activity                           | Deleted with account      |
+# 2.4 What we DO NOT collect
 
-- **Access** your data — via the app or by emailing `privacy@safeher.app`
-- **Rectify** inaccurate data — directly editable in the app
-- **Erase** your data — see §5.2
-- **Restrict** processing — turn off features in Settings; disable notifications
-- **Data portability** — request a JSON export at `privacy@safeher.app`
-- **Object** to processing — email us
-- **Lodge a complaint** with your national supervisory authority (Italy: Garante Privacy, garanteprivacy.it)
+Safe(H)er follows a privacy-first approach.
 
-We respond to all requests within **30 days**.
+We do **not** collect:
 
----
+* ❌ Advertising identifiers (IDFA, GAID)
+* ❌ Analytics identifiers
+* ❌ Marketing trackers
+* ❌ Continuous microphone recordings
+* ❌ Uploaded camera content
+* ❌ Behavioural advertising data
+* ❌ Sale or sharing of personal data
+* ❌ Your PIN, in any verifiable form — it never leaves your device (see §2.2)
 
-## 7. Data security
+The microphone stream never leaves the device.
 
-See [`SECURITY.md`](./SECURITY.md) for the full technical posture. In brief:
+Voice trigger detection and scream detection are processed locally using the operating system speech recognition capabilities whenever possible.
 
-- **Bcrypt** for password hashing.
-- **HTTPS/TLS** for all in-transit traffic.
-- **JWT tokens** in `expo-secure-store` (iOS Keychain / Android Keystore) — never in AsyncStorage.
-- **Anti-enumeration** on `/forgot-password` and `/deletion-request` — responses never reveal whether an account exists.
-- **Rate limiting** on password-reset codes (5 wrong attempts → invalidated).
-- **On-device speech processing** — no audio ever leaves the phone.
-
----
-
-## 8. Children
-
-Safe(H)er is not directed to children under 13. We do not knowingly collect data from children. If you become aware that a minor has provided us data, please contact us to delete it.
-
----
-
-## 9. Changes to this policy
-
-We may update this policy to reflect legal or functional changes. The current version is always available at `https://www.safeher.app/privacy` and inside the app (Settings → Privacy Policy). Significant changes will be announced by email to the address associated with your account.
+Safe(H)er only receives the information required to activate an emergency workflow.
 
 ---
 
-## 10. Contact
+# 3. Permissions we request
 
-- **Privacy inquiries**: privacy@safeher.app
-- **Security disclosures**: security@safeher.app
-- **General support**: support@safeher.app
-- **Postal address**: on request
+Permissions are requested only when a user activates the related functionality.
+
+| Permission                     | Feature                                             | Usage                                                      |
+| ------------------------------- | --------------------------------------------------- | ------------------------------------------------------------ |
+| Location (When-in-use)         | SOS + Guardian Angel                                | GPS position during emergency activation                   |
+| Location (Always / Background) | Circle live location                                | Position sharing while an active Circle session exists     |
+| Microphone                     | Voice trigger, scream detection, evidence recording | Local audio processing; audio is not continuously uploaded |
+| Contacts                       | Trusted contacts import                             | One-time contact selection                                 |
+| Camera                         | Future evidence features                            | Not currently used                                         |
+| Biometrics / Face ID           | App protection                                      | Managed by device operating system                         |
+| Foreground service             | Android background safety features                  | Keeps active safety services running                       |
+| Vibration                      | Emergency confirmation                              | Feedback during SOS activation                             |
+| SEND_SMS (Android optional)    | Guardian Angel silent SMS                           | Emergency SMS only after explicit activation and consent   |
+| CALL_PHONE (Android optional)  | Voice-trigger automatic emergency call              | Places a call to 112 only when your safeword is recognised while Guardian Angel is active; see below |
 
 ---
 
-*This policy is written in plain English to be understandable by non-lawyers. A legally-precise Italian version is available on request.*
+# 3a. Guardian Angel — safety timer system
+
+Guardian Angel is an optional safety feature designed to provide additional protection during potentially risky situations.
+
+The feature requires explicit consent before activation.
+
+Before enabling Guardian Angel:
+
+* The user receives a clear explanation of the feature.
+* The user confirms consent.
+* At least one trusted contact must be configured.
+
+Guardian Angel uses:
+
+* GPS location
+* Battery percentage
+* Selected trusted contacts
+
+Only when:
+
+* The user starts a Guardian Angel timer.
+* The timer expires without confirmation.
+* An emergency event is triggered.
+
+There is no continuous monitoring when Guardian Angel is inactive.
+
+---
+
+## Automatic silent SMS (Android)
+
+Automatic silent SMS is an optional Android-only feature.
+
+By default, Guardian Angel uses the normal emergency communication flow requiring user interaction.
+
+If enabled:
+
+* The user explicitly grants permission.
+* The feature works only when a Guardian Angel timer expires.
+* It sends the emergency message directly from the device.
+* It is never used for advertising, tracking, or other purposes.
+* It is not available on iOS due to platform restrictions.
+
+The user can disable Guardian Angel and silent SMS at any time from application settings.
+
+---
+
+## Automatic emergency call via voice trigger (Android)
+
+This is an optional, Android-only escalation of the hands-free voice trigger feature described in Section 3.
+
+If your recognised safeword is heard **while a Guardian Angel session is currently active**:
+
+* The app places a real, automatic call to the single European emergency number (**112**) directly from the device, without opening the dialer or requiring a further tap.
+* This requires the separate `CALL_PHONE` permission, requested only the first time this situation occurs.
+* If the permission is not granted, or you are on iOS, or no Guardian Angel session is active, the voice trigger keeps behaving as normal: it opens the message composer / WhatsApp queue to your trusted contacts, exactly as when Guardian Angel is off.
+* This call is placed only to the emergency number — it is never used to call any other number, and never for advertising, tracking, or any other purpose.
+* You can avoid this behaviour at any time by not enabling Guardian Angel, by not granting the `CALL_PHONE` permission, or by disabling voice trigger in Settings.
+
+---
+
+# 4. Where data is stored and processed
+
+Safe(H)er infrastructure is designed according to privacy-by-design principles.
+
+## Backend
+
+Backend services are hosted on secure infrastructure.
+
+## Database
+
+User information is stored in MongoDB with encryption at rest.
+
+## Email delivery
+
+Transactional emails are used only for:
+
+* Password recovery
+* Account deletion confirmation
+* Security notifications
+
+Only the minimum required email information is processed.
+
+## Speech recognition
+
+Speech processing uses:
+
+* Apple speech recognition services on iOS
+* Android speech recognition services
+
+Whenever supported, on-device recognition is preferred.
+
+---
+
+# Website and privacy resources
+
+Official website:
+
+https://www.safeherapp.site
+
+Privacy policy:
+
+https://www.safeherapp.site/privacy
+
+Account deletion:
+
+https://www.safeherapp.site/delete-account
+# 5. Data retention
+
+## 5.1 Standard retention
+
+Safe(H)er keeps personal data only for the period necessary to provide the requested safety services.
+
+Account data is maintained while the account remains active because users may need access to:
+
+* Previous SOS events
+* Safety configurations
+* Trusted contacts
+* Emergency history
+* Evidence records
+
+---
+
+## 5.2 Deletion on user request
+
+Users can request deletion of their account and associated data at any time.
+
+Available methods:
+
+### 1. In-app deletion
+
+Path:
+
+```
+Settings → Delete my account
+```
+
+The user must confirm identity before deletion.
+
+The deletion process removes associated personal data according to applicable GDPR requirements.
+
+---
+
+### 2. Website deletion request
+
+Users can submit a deletion request through:
+
+https://www.safeherapp.site/delete-account
+
+Requests are processed according to GDPR Article 17 requirements.
+
+---
+
+### 3. Email request
+
+Users can contact:
+
+[safherofficial@gmail.com](mailto:safherofficial@gmail.com)
+
+for account deletion or privacy-related requests.
+
+---
+
+## 5.3 Automatic deletion after inactivity
+
+Safe(H)er may provide optional inactivity-based deletion controls.
+
+Users can select their preferred retention period:
+
+* 30 days
+* 60 days
+* 90 days
+* 180 days
+* 365 days
+* Never
+
+The default option is:
+
+**Never**
+
+No automatic deletion occurs unless explicitly activated by the user.
+
+---
+
+# 6. Your GDPR rights
+
+Under GDPR regulations, users have the right to:
+
+## Access
+
+Request information about stored personal data.
+
+## Rectification
+
+Correct inaccurate information.
+
+## Erasure
+
+Request deletion of personal data.
+
+## Restriction
+
+Limit processing through account settings or privacy controls.
+
+## Data portability
+
+Request a structured export of personal information.
+
+## Objection
+
+Object to specific processing activities.
+
+---
+
+Privacy requests can be sent to:
+
+**[safherofficial@gmail.com](mailto:safherofficial@gmail.com)**
+
+We aim to respond within the applicable GDPR timeframe.
+
+---
+
+# 7. Data security
+
+Safe(H)er applies technical and organisational measures designed to protect personal information.
+
+Security measures include:
+
+* Bcrypt password hashing
+* HTTPS/TLS encrypted communication
+* Secure token storage
+* Protection against account enumeration
+* Rate limiting for authentication workflows
+* Minimal data collection principles
+* Local processing whenever possible
+* PIN verification kept entirely on-device (see §2.2) — our servers never receive a verifiable copy of your PIN
+* Calculator disguise mode automatically stays disabled on any device that does not have a locally configured PIN (e.g. after a reinstall), so you can never be permanently locked out of your own account by the disguise
+
+Sensitive emergency data is transmitted only when required to provide safety functionality.
+
+---
+
+# 8. Children
+
+Safe(H)er is not intended for children under 13 years old.
+
+We do not knowingly collect personal information from children.
+
+If you believe that a minor has provided personal data, contact:
+
+[safherofficial@gmail.com](mailto:safherofficial@gmail.com)
+
+and we will take appropriate action.
+
+---
+
+# 9. Changes to this Privacy Policy
+
+Safe(H)er may update this Privacy Policy when:
+
+* New features are introduced
+* Legal requirements change
+* Security improvements are implemented
+
+The latest version is always available at:
+
+https://www.safeherapp.site/privacy
+
+Significant changes may be communicated through available channels.
+
+---
+
+# 10. Contact
+
+For privacy, security and support requests:
+
+**Safe(H)er Team**
+
+Email:
+
+[safherofficial@gmail.com](mailto:safherofficial@gmail.com)
+
+Website:
+
+https://www.safeherapp.site
+
+Account deletion:
+
+https://www.safeherapp.site/delete-account
+
+---
+
+This Privacy Policy is written to provide clear information about Safe(H)er's privacy practices and explain how personal data is handled.
+
+A legally precise Italian version can be provided when required.
